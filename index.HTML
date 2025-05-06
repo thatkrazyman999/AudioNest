@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AudioNest – Listen Anywhere</title>
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #fcefe3;
+      color: #3e2723;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.2em;
+      color: #6d4c41;
+    }
+
+    .menu {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin-top: 30px;
+    }
+
+    .menu-item {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    .menu-item:hover {
+      background: #fce3d3;
+      transform: translateY(-5px);
+    }
+
+    .menu-item h2 {
+      font-size: 1.3em;
+      margin-bottom: 10px;
+    }
+
+    .menu-item a {
+      text-decoration: none;
+      color: #d84315;
+      font-weight: bold;
+      border: 1px solid #d84315;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .menu-item a:hover {
+      background: #d84315;
+      color: white;
+    }
+
+    /* Admin Panel */
+    .admin-panel {
+      display: none;
+      margin-top: 50px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-panel input[type="file"] {
+      margin: 20px 0;
+      padding: 10px;
+      border: 1px solid #d84315;
+      border-radius: 10px;
+    }
+
+    .admin-panel button {
+      background-color: #d84315;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .admin-panel button:hover {
+      background-color: #c13512;
+    }
+
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #795548;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #error-message {
+      color: red;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>AudioNest</h1>
+    <p>Your cozy corner for immersive audiobooks 🎧</p>
+  </header>
+
+  <!-- Menu with categories -->
+  <div class="menu">
+    <div class="menu-item">
+      <h2>Fiction</h2>
+      <p>Enter new worlds, characters, and adventures.</p>
+      <a href="#" onclick="playAudio('fiction.mp3')">Listen Now</a>
+    </div>
+    <div class="menu-item">
+      <h2>Self-Help</h2>
+      <p>Grow, reflect, and unlock your potential.</p>
+      <a href="#" onclick="playAudio('selfhelp.mp3')">Listen Now</a>
+    </div>
+    <div class="menu-item">
+      <h2>Children’s Stories</h2>
+      <p>Magical tales for young listeners.</p>
+      <a href="#" onclick="playAudio('children.mp3')">Listen Now</a>
+    </div>
+    <div class="menu-item">
+      <h2>History & Culture</h2>
+      <p>Explore the voices of the past and present.</p>
+      <a href="#" onclick="playAudio('history.mp3')">Listen Now</a>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div class="admin-panel" id="adminPanel">
+    <h2>Admin Panel</h2>
+    <p>Upload MP3 files to share new audiobooks:</p>
+    <input type="file" id="fileUpload" accept="audio/mp3">
+    <button onclick="uploadFile()">Upload</button>
+    <div id="error-message"></div> <!-- Error message container -->
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 AudioNest – Made with ❤️ for audiobook lovers.
+    <br>
+    <button onclick="toggleAdminPanel()">Admin Panel</button>
+  </footer>
+
+  <!-- Hidden Audio Player -->
+  <audio id="audioPlayer" controls class="hidden">
+    <source id="audioSource" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    // Admin Panel access
+    const correctPassword = "admin123"; // The admin password (change it)
+    let isAdmin = false;
+
+    function toggleAdminPanel() {
+      if (isAdmin) {
+        const panel = document.getElementById("adminPanel");
+        panel.style.display = panel.style.display === "block" ? "none" : "block";
+      } else {
+        const password = prompt("Enter admin password:");
+        if (password === correctPassword) {
+          isAdmin = true;
+          const panel = document.getElementById("adminPanel");
+          panel.style.display = "block";
+        } else {
+          alert("Incorrect password!");
+        }
+      }
+    }
+
+    // Function to play selected audiobook
+    function playAudio(file) {
+      const audioPlayer = document.getElementById("audioPlayer");
+      const audioSource = document.getElementById("audioSource");
+      audioSource.src = file;  // Replace with the actual path to the file
+      audioPlayer.load();
+      audioPlayer.play();
+      audioPlayer.style.display = "block";  // Show the player
+    }
+
+    // Function to simulate file upload (for demo purposes)
+    function uploadFile() {
+      const fileInput = document.getElementById("fileUpload");
+      const file = fileInput.files[0];
+      const errorMessage = document.getElementById("error-message");
+
+      // Clear any previous error messages
+      errorMessage.textContent = '';
+
+      // Check if file is selected and it's an MP3
+      if (file) {
+        if (file.type === "audio/mp3") {
+          alert("File uploaded: " + file.name);
+        } else {
+          errorMessage.textContent = "Please upload a valid MP3 file.";
+        }
+      } else {
+        errorMessage.textContent = "Please select a file to upload.";
+      }
+    }
+  </script>
+
+</body>
+</html>
